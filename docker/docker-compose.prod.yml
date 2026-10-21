@@ -8,6 +8,7 @@ services:
       - xpack.security.enabled=false
       - xpack.security.http.ssl.enabled=false
       - xpack.ml.enabled=false
+      - xpack.license.self_generated.type=trial
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx1g"
     ulimits:
@@ -20,7 +21,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"\\(green\\|yellow\\)\"'"]
       interval: 15s
-      timeout: 5s
+      timeout: 10s
       retries: 10
       start_period: 30s
     volumes:
@@ -55,7 +56,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://localhost:8090/v3/api-docs > /dev/null || exit 1"]
       interval: 15s
-      timeout: 5s
+      timeout: 10s
       retries: 5
       start_period: 30s
     deploy:

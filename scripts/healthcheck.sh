@@ -42,8 +42,12 @@ fi
 
 # 3. Frontend Web App Check
 echo -ne "3. Checking Frontend Web Application... "
-if curl -s -I http://localhost:3000/ 2>/dev/null | grep -q "200 OK"; then
+if curl -s -I http://localhost:8080/ 2>/dev/null | grep -q "200 OK"; then
+    echo -e "${GREEN}UP on Port 8080 (NGINX container)${NC}"
+elif curl -s -I http://localhost:3000/ 2>/dev/null | grep -q "200 OK"; then
     echo -e "${GREEN}UP on Port 3000 (NGINX container)${NC}"
+elif curl -s -I http://localhost/ 2>/dev/null | grep -q "200 OK"; then
+    echo -e "${GREEN}UP on Port 80 (NGINX container)${NC}"
 elif curl -s -I http://localhost:8090/ 2>/dev/null | grep -q "200"; then
     echo -e "${GREEN}UP on Port 8090 (Spring Boot embedded static)${NC}"
 else

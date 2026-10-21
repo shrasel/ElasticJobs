@@ -7,6 +7,7 @@ services:
       - xpack.security.enabled=false
       - xpack.security.http.ssl.enabled=false
       - xpack.ml.enabled=false
+      - xpack.license.self_generated.type=trial
       - bootstrap.memory_lock=false
       - "ES_JAVA_OPTS=-Xms256m -Xmx384m"
     ports:
@@ -15,9 +16,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"\\(green\\|yellow\\)\"'"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
-      start_period: 20s
+      start_period: 25s
     volumes:
       - es_data:/usr/share/elasticsearch/data
     networks:
@@ -39,9 +40,9 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://localhost:8090/v3/api-docs > /dev/null || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 8
       start_period: 25s
     networks:
       - elasticjobs-net
@@ -52,7 +53,7 @@ services:
       dockerfile: Dockerfile
     container_name: jobsearch-frontend
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT:-8080}:80"
     depends_on:
       backend:
         condition: service_healthy
