@@ -15,7 +15,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # Stage 2: Minimal Distroless / Hardened Alpine Runtime
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # Run as non-privileged security user
