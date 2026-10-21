@@ -1,0 +1,38 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: es-job-search-service
+  threads:
+    virtual:
+      enabled: true
+  web:
+    resources:
+      cache:
+        period: 0
+        cachecontrol:
+          no-cache: true
+          no-store: true
+          must-revalidate: true
+
+elasticsearch:
+  uris: http://localhost:9200
+  index-name: jobs_v1
+  index-alias: jobs
+
+embedding:
+  dimension: 384
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+logging:
+  level:
+    com.jobsearch: DEBUG
+    co.elastic.clients: INFO

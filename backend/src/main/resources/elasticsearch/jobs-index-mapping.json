@@ -1,0 +1,122 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "filter": {
+        "job_synonyms": {
+          "type": "synonym_graph",
+          "synonyms": [
+            "k8s, kubernetes",
+            "js, javascript",
+            "ts, typescript",
+            "golang, go",
+            "ml, machine learning, ai, artificial intelligence",
+            "react, reactjs, react.js",
+            "aws, amazon web services",
+            "gcp, google cloud platform",
+            "cpa, certified public accountant"
+          ]
+        },
+        "english_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        }
+      },
+      "analyzer": {
+        "job_text_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding", "job_synonyms", "english_stemmer"]
+        },
+        "job_autocomplete_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": { "type": "keyword" },
+      "title": {
+        "type": "text",
+        "analyzer": "job_text_analyzer",
+        "fields": {
+          "suggest": {
+            "type": "search_as_you_type",
+            "analyzer": "job_autocomplete_analyzer"
+          },
+          "raw": { "type": "keyword" }
+        }
+      },
+      "company": {
+        "properties": {
+          "id": { "type": "keyword" },
+          "name": {
+            "type": "text",
+            "analyzer": "job_text_analyzer",
+            "fields": {
+              "suggest": { "type": "search_as_you_type" },
+              "raw": { "type": "keyword" }
+            }
+          },
+          "website": { "type": "keyword" },
+          "logo_url": { "type": "keyword" }
+        }
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "job_text_analyzer"
+      },
+      "skills": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "text",
+            "analyzer": "job_text_analyzer",
+            "fields": {
+              "suggest": { "type": "search_as_you_type" },
+              "raw": { "type": "keyword" }
+            }
+          },
+          "category": { "type": "keyword" }
+        }
+      },
+      "location": {
+        "properties": {
+          "city": { "type": "keyword" },
+          "state": { "type": "keyword" },
+          "country": { "type": "keyword" },
+          "coordinates": { "type": "geo_point" }
+        }
+      },
+      "workplace_type": { "type": "keyword" },
+      "employment_type": { "type": "keyword" },
+      "experience_level": { "type": "keyword" },
+      "salary": {
+        "properties": {
+          "min": { "type": "integer" },
+          "max": { "type": "integer" },
+          "currency": { "type": "keyword" },
+          "period": { "type": "keyword" }
+        }
+      },
+      "visa_sponsored": { "type": "boolean" },
+      "posted_at": { "type": "date" },
+      "is_active": { "type": "boolean" },
+      "embedding": {
+        "type": "dense_vector",
+        "dims": 384,
+        "index": true,
+        "similarity": "cosine",
+        "index_options": {
+          "type": "hnsw",
+          "m": 16,
+          "ef_construction": 100
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+JOHN DOE
+SENIOR CLOUD & KUBERNETES ENGINEER
+Email: john.doe@email.com | Phone: 555-0199 | Location: Remote
+
+SUMMARY
+Platform engineer with 7+ years of experience maintaining large-scale production Kubernetes clusters on AWS and Google Cloud Platform. Expert in Docker, Helm, Terraform, Datadog observability, and Prometheus metrics.
+
+SKILLS
+- Cloud: AWS, GCP, Azure
+- Orchestration: Kubernetes, Docker, Helm, OpenShift
+- Monitoring: Prometheus, Datadog, Grafana
+- Languages: Go, Python, Bash

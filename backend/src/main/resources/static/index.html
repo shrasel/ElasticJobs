@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ElasticJobs | Modern AI & Vector Job Search</title>
+    <meta name="description" content="High-performance Job Search Platform powered 100% by Elasticsearch 8.x featuring Hybrid RRF, Semantic Vector, Geo-Radius, and Typo Tolerance.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=20261020_light_final">
+    <style>
+        :root {
+            --bg-base: #f8fafc !important;
+            --bg-surface: #ffffff !important;
+            --bg-surface-elevated: #ffffff !important;
+            --bg-surface-hover: #f1f5f9 !important;
+            --border-color: #e2e8f0 !important;
+            --text-primary: #0f172a !important;
+            --text-secondary: #475569 !important;
+            --primary: #4f46e5 !important;
+        }
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background glow gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <path d="M11 8v6M8 11h6"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">ElasticJobs</span>
+                    <span class="brand-badge">Pure ES 8.x</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <button id="resume-btn" class="btn btn-secondary" title="Upload Resume for AI Match">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Match Resume</span>
+                </button>
+                <a href="/swagger-ui/index.html" target="_blank" class="swagger-link" title="OpenAPI Documentation">API</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+        <!-- Hero Search Section -->
+        <section class="hero-search">
+            <div class="hero-tagline">
+                <h1>Find your next engineering role</h1>
+                <p>Lexical BM25, Typo-Tolerant, Geo-Spatial & HNSW Semantic Vector Search merged via RRF</p>
+            </div>
+
+            <!-- Search Mode Switcher Tabs -->
+            <div class="mode-tabs-container">
+                <div class="mode-tabs" role="tablist">
+                    <button class="mode-tab active" data-mode="HYBRID" role="tab" aria-selected="true">
+                        <span class="mode-indicator"></span>
+                        Hybrid RRF <span class="badge-rec">Rec</span>
+                    </button>
+                    <button class="mode-tab" data-mode="SEMANTIC" role="tab" aria-selected="false">
+                        Semantic AI
+                    </button>
+                    <button class="mode-tab" data-mode="KEYWORD" role="tab" aria-selected="false">
+                        Weighted Keyword
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Box with Autocomplete -->
+            <div class="search-box-wrapper">
+                <div class="search-input-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Role, tech stack, 'building mobile apps for hospitals', or 'react OR vue'..." autocomplete="off">
+                    <button id="clear-input-btn" class="clear-btn" aria-label="Clear search" style="display: none;">&times;</button>
+                    <button id="search-submit-btn" class="btn btn-primary search-action-btn">
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <!-- Instant Autocomplete Dropdown -->
+                <div id="autocomplete-dropdown" class="autocomplete-dropdown" style="display: none;">
+                    <div class="autocomplete-header">
+                        <span>Instant Suggestions</span>
+                        <span class="autocomplete-speed" id="autocomplete-speed">&lt;15ms</span>
+                    </div>
+                    <div id="autocomplete-list" class="autocomplete-list"></div>
+                </div>
+            </div>
+
+            <!-- Quick Suggestion Pills -->
+            <div class="quick-chips">
+                <span class="chip-label">Try:</span>
+                <button class="chip" data-query="react OR vue -junior" data-mode="KEYWORD">react OR vue -junior</button>
+                <button class="chip" data-query="softwre enginer" data-mode="KEYWORD">softwre enginer (fuzzy)</button>
+                <button class="chip" data-query="building mobile apps for hospitals" data-mode="SEMANTIC">mobile apps for hospitals (AI)</button>
+                <button class="chip" data-query="CPA license audit manager" data-mode="HYBRID">CPA license audit manager (RRF)</button>
+            </div>
+        </section>
+
+        <!-- Search Controls & Mobile Filter Trigger -->
+        <section class="controls-bar">
+            <div class="results-stats">
+                <span id="results-count" class="count-badge">Loading jobs...</span>
+                <span id="search-latency" class="latency-badge"></span>
+            </div>
+
+            <div class="controls-actions">
+                <button id="mobile-filter-btn" class="btn btn-outline filter-trigger-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                    <span>Filters</span>
+                    <span id="active-filter-count" class="filter-count-badge" style="display: none;">0</span>
+                </button>
+
+                <div class="sort-select-wrapper">
+                    <select id="sort-select" aria-label="Sort jobs by">
+                        <option value="RELEVANCE">Relevance</option>
+                        <option value="GEO_DISTANCE">Closest Distance</option>
+                        <option value="SALARY_DESC">Highest Salary</option>
+                        <option value="POSTED_DATE_DESC">Recently Posted</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area: Filters Sidebar + Job Cards Grid -->
+        <div class="content-layout">
+            <!-- Filter Sidebar (Drawer on Mobile, Sidebar on Desktop) -->
+            <aside id="filter-sidebar" class="filter-sidebar">
+                <div class="filter-sidebar-header">
+                    <h3>Filters</h3>
+                    <button id="close-filter-btn" class="close-drawer-btn" aria-label="Close filters">&times;</button>
+                </div>
+
+                <div class="filter-sidebar-content">
+                    <!-- Geo Location / Near Me Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-header">
+                            <label>Geo Radius & Location</label>
+                            <button id="near-me-btn" class="text-btn">📍 Near Plano, TX</button>
+                        </div>
+                        <div class="geo-controls">
+                            <div class="geo-status" id="geo-status">Plano, TX (33.02, -96.70)</div>
+                            <div class="range-slider-wrapper">
+                                <input type="range" id="geo-radius-slider" min="5" max="100" step="5" value="25">
+                                <div class="slider-labels">
+                                    <span>Radius:</span>
+                                    <strong id="geo-radius-label">25 miles</strong>
+                                </div>
+                            </div>
+                            <label class="checkbox-label toggle-geo">
+                                <input type="checkbox" id="geo-enabled-check">
+                                <span>Enable Geo-Radius Filter</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Workplace Type Facet -->
+                    <div class="filter-group">
+                        <label class="filter-label">Workplace</label>
+                        <div class="facet-options" id="workplace-facets">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="workplace" value="REMOTE">
+                                <span>Remote</span>
+                                <span class="facet-count" id="count-remote">0</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="workplace" value="HYBRID">
+                                <span>Hybrid</span>
+                                <span class="facet-count" id="count-hybrid">0</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="workplace" value="ON_SITE">
+                                <span>On-Site</span>
+                                <span class="facet-count" id="count-onsite">0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Minimum Salary Slider -->
+                    <div class="filter-group">
+                        <label class="filter-label">Minimum Salary</label>
+                        <div class="salary-slider-wrapper">
+                            <input type="range" id="salary-slider" min="50000" max="200000" step="10000" value="50000">
+                            <div class="slider-labels">
+                                <span>At least:</span>
+                                <strong id="salary-value-label">Any salary</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Level Facet -->
+                    <div class="filter-group">
+                        <label class="filter-label">Experience Level</label>
+                        <div class="facet-options" id="experience-facets">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="experience" value="ENTRY">
+                                <span>Entry Level</span>
+                                <span class="facet-count" id="count-entry">0</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="experience" value="MID">
+                                <span>Mid Level</span>
+                                <span class="facet-count" id="count-mid">0</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="experience" value="SENIOR">
+                                <span>Senior</span>
+                                <span class="facet-count" id="count-senior">0</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="experience" value="LEAD">
+                                <span>Lead / Staff</span>
+                                <span class="facet-count" id="count-lead">0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Visa Sponsorship -->
+                    <div class="filter-group">
+                        <label class="checkbox-label switch-row">
+                            <span>Visa Sponsorship Only</span>
+                            <input type="checkbox" id="visa-check">
+                        </label>
+                    </div>
+
+                    <!-- Typo Tolerance Toggle -->
+                    <div class="filter-group">
+                        <label class="checkbox-label switch-row">
+                            <span>Fuzzy Typo Tolerance</span>
+                            <input type="checkbox" id="fuzzy-check" checked>
+                        </label>
+                    </div>
+
+                    <!-- Reset Filters Button -->
+                    <button id="reset-filters-btn" class="btn btn-outline full-width">Reset All Filters</button>
+                </div>
+            </aside>
+
+            <!-- Job Listings Column -->
+            <section class="listings-section">
+                <!-- Active Filters Chips Bar -->
+                <div id="active-chips-bar" class="active-chips-bar" style="display: none;"></div>
+
+                <!-- Job Cards Container -->
+                <div id="jobs-container" class="jobs-grid">
+                    <!-- Skeletons rendered by JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <path d="M8 11h6"></path>
+                    </svg>
+                    <h3>No matching jobs found</h3>
+                    <p>Try broadening your query, adjusting filters, or switching to Semantic AI search.</p>
+                    <button id="empty-reset-btn" class="btn btn-primary">Reset Filters</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Job Details Modal -->
+    <div id="job-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card">
+            <button id="close-modal-btn" class="modal-close" aria-label="Close dialog">&times;</button>
+            <div id="modal-content" class="modal-body">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Match Modal -->
+    <div id="resume-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card resume-modal-card">
+            <button id="close-resume-modal-btn" class="modal-close" aria-label="Close dialog">&times;</button>
+            <div class="modal-header">
+                <h2>AI Resume Matcher</h2>
+                <p>Upload your resume to calculate 384-dim HNSW vector similarity across active job postings.</p>
+            </div>
+            <div class="modal-body">
+                <!-- Dropzone -->
+                <div id="dropzone" class="dropzone">
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p><strong>Click to upload</strong> or drag and drop</p>
+                    <span>PDF, DOCX, or TXT file (Max 5MB)</span>
+                    <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+                </div>
+
+                <div id="selected-file-info" class="selected-file" style="display: none;">
+                    <span id="selected-filename">resume.pdf</span>
+                    <button id="remove-file-btn" class="remove-file">&times;</button>
+                </div>
+
+                <!-- Or paste text option -->
+                <div class="or-divider"><span>OR PASTE RESUME TEXT</span></div>
+                <textarea id="resume-text-input" placeholder="Paste your resume summary, tech skills, and work history here..." rows="4"></textarea>
+
+                <div class="resume-constraints">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="resume-visa-check">
+                        <span>Require Visa Sponsorship</span>
+                    </label>
+                </div>
+
+                <button id="submit-resume-btn" class="btn btn-primary full-width">
+                    <span>Find Matching Jobs</span>
+                </button>
+
+                <!-- Resume Results Container -->
+                <div id="resume-results" class="resume-results-container" style="display: none;">
+                    <h4>Top Matches For Your Profile</h4>
+                    <div id="resume-jobs-list" class="resume-jobs-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="drawer-overlay" class="drawer-overlay"></div>
+
+    <script src="app.js?v=20261020_light_final"></script>
+</body>
+</html>
