@@ -18,7 +18,7 @@
     <properties>
         <java.version>21</java.version>
         <elasticsearch.client.version>8.15.2</elasticsearch.client.version>
-        <springdoc.version>2.6.0</springdoc.version>
+        <springdoc.version>3.2.0</springdoc.version>
         <tika.version>2.9.2</tika.version>
     </properties>
 
